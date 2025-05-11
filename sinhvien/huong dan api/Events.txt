@@ -1,0 +1,17 @@
+    GET /events.php - Get all active upcoming events
+
+    GET /events.php?event_id=X - Get single event with registration count
+
+    GET /events.php?active=1 - Get all active events
+
+    GET /events.php?active=0 - Get all inactive events
+
+    GET /events.php?upcoming - Get upcoming events (start_datetime > now)
+
+    GET /events.php?past - Get past events (end_datetime < now)
+
+    POST /events.php - Create new event
+
+    PUT /events.php?event_id=X - Update event
+
+    DELETE /events.php?event_id=X - Delete event (only if no registrations)

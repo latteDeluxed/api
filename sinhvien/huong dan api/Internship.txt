@@ -1,0 +1,13 @@
+    GET /internships.php - Get all internship registrations
+
+    GET /internships.php?internship_id=X - Get single internship registration
+
+    GET /internships.php?student_id=X - Get internships for a student
+
+    GET /internships.php?status=X - Filter internships by status (Planning/Ongoing/Completed)
+
+    POST /internships.php - Create new internship registration
+
+    PUT /internships.php?internship_id=X - Update internship registration
+
+    DELETE /internships.php?internship_id=X - Delete internship registration

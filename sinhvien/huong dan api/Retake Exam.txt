@@ -1,0 +1,13 @@
+    GET /retake_exams.php - Get all retake exam registrations
+
+    GET /retake_exams.php?retake_id=X - Get single retake exam registration
+
+    GET /retake_exams.php?student_id=X - Get retake exam registrations for a student
+
+    GET /retake_exams.php?test_id=X - Get retake exam registrations for a test
+
+    POST /retake_exams.php - Create new retake exam registration
+
+    PUT /retake_exams.php?retake_id=X - Update retake exam registration
+
+    DELETE /retake_exams.php?retake_id=X - Delete retake exam registration

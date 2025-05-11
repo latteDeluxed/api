@@ -1,0 +1,9 @@
+    GET /students.php - Get all students
+
+    GET /students.php?student_id=X - Get single student
+
+    POST /students.php - Create new student
+
+    PUT /students.php?student_id=X - Update student
+
+    DELETE /students.php?student_id=X - Delete student
