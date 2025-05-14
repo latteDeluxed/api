@@ -1,9 +1,0 @@
-    GET /courses.php - Get all courses
-
-    GET /courses.php?course_id=X - Get single course
-
-    POST /courses.php - Create new course
-
-    PUT /courses.php?course_id=X - Update course
-
-    DELETE /courses.php?course_id=X - Delete course
