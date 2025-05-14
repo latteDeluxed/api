@@ -1,0 +1,13 @@
+    GET /submissions.php?submission_id=X - Get single submission
+
+    GET /submissions.php?assignment_id=X - Get all submissions for an assignment
+
+    GET /submissions.php?assignment_id=X&student_id=Y - Get specific student's submission
+
+    GET /submissions.php?student_id=X - Get all submissions by a student
+
+    POST /submissions.php - Create new submission
+
+    PUT /submissions.php?submission_id=X - Update submission
+
+    DELETE /submissions.php?submission_id=X - Delete submission
