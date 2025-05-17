@@ -1,0 +1,6 @@
+
+đường dẫn API: http://localhost/giaovienAPI/()
+trong dấu ngoặc thay đổi các thuộc tính như teachers, teacherqualifications,... ở bảng resources trong file html
+ví dụ http://localhost/giaovienAPI/teachers
+nhớ input database ở xampp
+nếu lỗi ko kêt nối đc database, kiểm tra file database.php trong tệp config ()
