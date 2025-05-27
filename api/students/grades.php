@@ -9,10 +9,10 @@ switch ($method) {
         if (isset($_GET['grade_id'])) {
             $grade_id = $_GET['grade_id'];
             $stmt = $conn->prepare("SELECT g.*, a.title as assignment_title, e.student_id, s.full_name as student_name
-                                   FROM Grades g
-                                   LEFT JOIN Assignments a ON g.assignment_id = a.assignment_id
-                                   JOIN Enrollments e ON g.enrollment_id = e.enrollment_id
-                                   JOIN Students s ON e.student_id = s.student_id
+                                   FROM grades g
+                                   LEFT JOIN assignments a ON g.assignment_id = a.assignment_id
+                                   JOIN enrollments e ON g.enrollment_id = e.enrollment_id
+                                   JOIN students s ON e.student_id = s.student_id
                                    WHERE g.grade_id = ?");
             $stmt->execute([$grade_id]);
             $grade = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -29,14 +29,14 @@ switch ($method) {
             
             if ($assignment_id) {
                 // Get specific assignment grade for enrollment
-                $stmt = $conn->prepare("SELECT g.* FROM Grades g 
+                $stmt = $conn->prepare("SELECT g.* FROM grades g 
                                       WHERE g.enrollment_id = ? AND g.assignment_id = ?");
                 $stmt->execute([$enrollment_id, $assignment_id]);
             } else {
                 // Get all grades for enrollment
                 $stmt = $conn->prepare("SELECT g.*, a.title as assignment_title 
-                                      FROM Grades g
-                                      LEFT JOIN Assignments a ON g.assignment_id = a.assignment_id
+                                      FROM grades g
+                                      LEFT JOIN assignments a ON g.assignment_id = a.assignment_id
                                       WHERE g.enrollment_id = ?");
                 $stmt->execute([$enrollment_id]);
             }
@@ -46,9 +46,9 @@ switch ($method) {
         } elseif (isset($_GET['assignment_id'])) {
             $assignment_id = $_GET['assignment_id'];
             $stmt = $conn->prepare("SELECT g.*, e.student_id, s.full_name as student_name 
-                                  FROM Grades g
-                                  JOIN Enrollments e ON g.enrollment_id = e.enrollment_id
-                                  JOIN Students s ON e.student_id = s.student_id
+                                  FROM grades g
+                                  JOIN enrollments e ON g.enrollment_id = e.enrollment_id
+                                  JOIN students s ON e.student_id = s.student_id
                                   WHERE g.assignment_id = ?");
             $stmt->execute([$assignment_id]);
             $grades = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -58,10 +58,10 @@ switch ($method) {
             $course_id = $_GET['course_id'] ?? null;
             
             $sql = "SELECT g.*, a.title as assignment_title, c.course_name 
-                    FROM Grades g
-                    LEFT JOIN Assignments a ON g.assignment_id = a.assignment_id
-                    JOIN Enrollments e ON g.enrollment_id = e.enrollment_id
-                    JOIN Courses c ON a.course_id = c.course_id
+                    FROM grades g
+                    LEFT JOIN assignments a ON g.assignment_id = a.assignment_id
+                    JOIN enrollments e ON g.enrollment_id = e.enrollment_id
+                    JOIN courses c ON a.course_id = c.course_id
                     WHERE e.student_id = ?";
             
             $params = [$student_id];
@@ -93,7 +93,7 @@ switch ($method) {
         
         try {
             // Check if enrollment exists
-            $stmt = $conn->prepare("SELECT 1 FROM Enrollments WHERE enrollment_id = ?");
+            $stmt = $conn->prepare("SELECT 1 FROM enrollments WHERE enrollment_id = ?");
             $stmt->execute([$data['enrollment_id']]);
             if ($stmt->rowCount() == 0) {
                 http_response_code(404);
@@ -103,7 +103,7 @@ switch ($method) {
             
             // If assignment_id is provided, check if it exists
             if (isset($data['assignment_id'])) {
-                $stmt = $conn->prepare("SELECT 1 FROM Assignments WHERE assignment_id = ?");
+                $stmt = $conn->prepare("SELECT 1 FROM assignments WHERE assignment_id = ?");
                 $stmt->execute([$data['assignment_id']]);
                 if ($stmt->rowCount() == 0) {
                     http_response_code(404);
@@ -128,7 +128,7 @@ switch ($method) {
             }
             
             // Create grade
-            $stmt = $conn->prepare("INSERT INTO Grades (enrollment_id, assignment_id, score, grade_letter, comments, published) 
+            $stmt = $conn->prepare("INSERT INTO grades (enrollment_id, assignment_id, score, grade_letter, comments, published) 
                                    VALUES (?, ?, ?, ?, ?, ?)");
             $stmt->execute([
                 $data['enrollment_id'],
@@ -191,7 +191,7 @@ switch ($method) {
         $params[] = $grade_id;
         
         try {
-            $sql = "UPDATE Grades SET " . implode(', ', $fields) . " WHERE grade_id = ?";
+            $sql = "UPDATE grades SET " . implode(', ', $fields) . " WHERE grade_id = ?";
             $stmt = $conn->prepare($sql);
             $stmt->execute($params);
             
@@ -219,7 +219,7 @@ switch ($method) {
         
         try {
             // First check if grade exists
-            $stmt = $conn->prepare("SELECT 1 FROM Grades WHERE grade_id = ?");
+            $stmt = $conn->prepare("SELECT 1 FROM grades WHERE grade_id = ?");
             $stmt->execute([$grade_id]);
             
             if ($stmt->rowCount() == 0) {
@@ -229,7 +229,7 @@ switch ($method) {
             }
             
             // Delete grade
-            $stmt = $conn->prepare("DELETE FROM Grades WHERE grade_id = ?");
+            $stmt = $conn->prepare("DELETE FROM grades WHERE grade_id = ?");
             $stmt->execute([$grade_id]);
             
             echo json_encode(["message" => "Grade deleted successfully"]);

@@ -9,9 +9,9 @@ switch ($method) {
         if (isset($_GET['submission_id'])) {
             $submission_id = $_GET['submission_id'];
             $stmt = $conn->prepare("SELECT s.*, a.title as assignment_title, st.full_name as student_name 
-                                  FROM Submissions s
-                                  JOIN Assignments a ON s.assignment_id = a.assignment_id
-                                  JOIN Students st ON s.student_id = st.student_id
+                                  FROM submissions s
+                                  JOIN assignments a ON s.assignment_id = a.assignment_id
+                                  JOIN students st ON s.student_id = st.student_id
                                   WHERE s.submission_id = ?");
             $stmt->execute([$submission_id]);
             $submission = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -28,14 +28,14 @@ switch ($method) {
             
             if ($student_id) {
                 // Get specific student's submission for an assignment
-                $stmt = $conn->prepare("SELECT s.* FROM Submissions s 
+                $stmt = $conn->prepare("SELECT s.* FROM submissions s 
                                       WHERE s.assignment_id = ? AND s.student_id = ?");
                 $stmt->execute([$assignment_id, $student_id]);
             } else {
                 // Get all submissions for an assignment
                 $stmt = $conn->prepare("SELECT s.*, st.full_name as student_name 
-                                      FROM Submissions s
-                                      JOIN Students st ON s.student_id = st.student_id
+                                      FROM submissions s
+                                      JOIN students st ON s.student_id = st.student_id
                                       WHERE s.assignment_id = ?");
                 $stmt->execute([$assignment_id]);
             }
@@ -45,8 +45,8 @@ switch ($method) {
         } elseif (isset($_GET['student_id'])) {
             $student_id = $_GET['student_id'];
             $stmt = $conn->prepare("SELECT s.*, a.title as assignment_title 
-                                   FROM Submissions s
-                                   JOIN Assignments a ON s.assignment_id = a.assignment_id
+                                   FROM submissions s
+                                   JOIN assignments a ON s.assignment_id = a.assignment_id
                                    WHERE s.student_id = ?");
             $stmt->execute([$student_id]);
             $submissions = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -72,7 +72,7 @@ switch ($method) {
         
         try {
             // Check if assignment exists
-            $stmt = $conn->prepare("SELECT 1 FROM Assignments WHERE assignment_id = ?");
+            $stmt = $conn->prepare("SELECT 1 FROM assignments WHERE assignment_id = ?");
             $stmt->execute([$data['assignment_id']]);
             if ($stmt->rowCount() == 0) {
                 http_response_code(404);
@@ -81,7 +81,7 @@ switch ($method) {
             }
             
             // Check if student exists
-            $stmt = $conn->prepare("SELECT 1 FROM Students WHERE student_id = ?");
+            $stmt = $conn->prepare("SELECT 1 FROM students WHERE student_id = ?");
             $stmt->execute([$data['student_id']]);
             if ($stmt->rowCount() == 0) {
                 http_response_code(404);
@@ -90,7 +90,7 @@ switch ($method) {
             }
             
             // Check if submission already exists
-            $stmt = $conn->prepare("SELECT 1 FROM Submissions WHERE assignment_id = ? AND student_id = ?");
+            $stmt = $conn->prepare("SELECT 1 FROM submissions WHERE assignment_id = ? AND student_id = ?");
             $stmt->execute([$data['assignment_id'], $data['student_id']]);
             if ($stmt->rowCount() > 0) {
                 http_response_code(409);
@@ -99,14 +99,14 @@ switch ($method) {
             }
             
             // Determine if submission is late
-            $stmt = $conn->prepare("SELECT due_date FROM Assignments WHERE assignment_id = ?");
+            $stmt = $conn->prepare("SELECT due_date FROM assignments WHERE assignment_id = ?");
             $stmt->execute([$data['assignment_id']]);
             $assignment = $stmt->fetch(PDO::FETCH_ASSOC);
             $status = (strtotime($data['submission_date'] ?? date('Y-m-d H:i:s')) > strtotime($assignment['due_date'])) 
                      ? 'Late' : 'Submitted';
             
             // Create submission
-            $stmt = $conn->prepare("INSERT INTO Submissions (assignment_id, student_id, submission_date, file_path, content, status) 
+            $stmt = $conn->prepare("INSERT INTO submissions (assignment_id, student_id, submission_date, file_path, content, status) 
                                   VALUES (?, ?, ?, ?, ?, ?)");
             $stmt->execute([
                 $data['assignment_id'],
@@ -162,7 +162,7 @@ switch ($method) {
         $params[] = $submission_id;
         
         try {
-            $sql = "UPDATE Submissions SET " . implode(', ', $fields) . " WHERE submission_id = ?";
+            $sql = "UPDATE submissions SET " . implode(', ', $fields) . " WHERE submission_id = ?";
             $stmt = $conn->prepare($sql);
             $stmt->execute($params);
             
@@ -190,7 +190,7 @@ switch ($method) {
         
         try {
             // First check if submission exists
-            $stmt = $conn->prepare("SELECT 1 FROM Submissions WHERE submission_id = ?");
+            $stmt = $conn->prepare("SELECT 1 FROM submissions WHERE submission_id = ?");
             $stmt->execute([$submission_id]);
             
             if ($stmt->rowCount() == 0) {
@@ -200,7 +200,7 @@ switch ($method) {
             }
             
             // Delete submission
-            $stmt = $conn->prepare("DELETE FROM Submissions WHERE submission_id = ?");
+            $stmt = $conn->prepare("DELETE FROM submissions WHERE submission_id = ?");
             $stmt->execute([$submission_id]);
             
             echo json_encode(["message" => "Submission deleted successfully"]);
